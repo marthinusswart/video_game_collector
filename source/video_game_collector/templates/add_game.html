@@ -1,0 +1,143 @@
+{% extends "base.html" %} {% block title %}Add Game{% endblock %} {% block
+content %}
+
+<script type="text/javascript" src="{{ url_for('static', filename='add_game.js') }}"></script>
+
+<center>
+  <h1>Add New Game</h1>
+</center>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="game-title-text"> Title </span>
+        {{ form.title }}
+        <button class="btn btn-secondary" type="button">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="game-sort-title-text">
+          Sort Title
+        </span>
+        {{ form.sort_title }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="purchase-price-text">Purchase Price</span>
+        <span class="input-group-text">$</span>
+        {{ form.purchase_price }}
+      </div>
+    </div>
+
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="series-text">Series</span>
+
+        {{ form.series }}
+      </div>
+    </div>
+  </div>
+
+  <h5>Game Details</h5>
+
+  <div class="row">
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <label class="input-group-text" id="platform-text" for="game_platform_id">Platform</label>
+        {{ form.game_platform_id }}
+      </div>
+    </div>
+
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <label class="input-group-text" id="format-text" for="format_type_id">Format</label>
+        {{ form.format_type_id }}
+      </div>
+    </div>
+
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <label class="input-group-text" id="region-text" for="region_id">Region</label>
+
+        {{ form.region_id }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="release-date-text">Release Date</span>
+
+        {{ form.release_date }}
+      </div>
+    </div>
+
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <label class="input-group-text" id="rating-text" for="audience_rating_id">Age Rating</label>
+
+        {{ form.audience_rating_id }}
+      </div>
+    </div>
+
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <label class="input-group-text" id="condition-text" for="condition_id">Condition</label>
+
+        {{ form.condition_id }}
+      </div>
+    </div>
+  </div>
+
+  <h5>Additional Details</h5>
+
+  <div class="row">
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <label class="input-group-text" id="developer-text" for="developer_id">Developer</label>
+
+        {{ form.developer_id }}
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <label class="input-group-text" id="publisher-text" for="publisher_id">Publisher</label>
+
+        {{ form.publisher_id }}
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <label class="input-group-text" id="vendor-text" for="vendor_id">Vendor</label>
+
+        {{ form.vendor_id }}
+      </div>
+    </div>
+  </div>
+
+  <h5>Game Description</h5>
+
+  <div class="row">
+    <div class="col-md">
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="description-text">
+          Description
+        </span>
+
+        {{ form.description(rows=5, cols=50) }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
