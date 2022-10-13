@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block title %}Add Vendor{% endblock %} {% block
+    content %}
+    
+    <center><h1>Add New Genre</h1></center>
+    
+    <form method="post" action="" enctype="multipart/form-data">
+      <div class="container">
+        <div class="row">
+          <div class="col-md">
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="game-title-text"> Genre </span>
+              {{ form.genre_name }}
+              <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    
+    {% endblock %}

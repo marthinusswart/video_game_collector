@@ -1,4 +1,47 @@
 {% extends "base.html" %} {% block title %}Games{% endblock %} {% block content
 %}
+
+<script type="text/javascript" src="{{ url_for('static', filename='home.js') }}"></script>
+
 <h1 align="center">Games</h1>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Game Title</th>
+            <th scope="col">Series</th>
+            <th scope="col">Release Date</th>
+            <th scope="col">Platform</th>
+            <th scope="col">Developer</th>
+            <th scope="col">Publisher</th>
+            <th scope="col">Age Rating</th>
+            <th scope="col">Region</th>
+            <th scope="col">Format</th>
+            <th scope="col">Price</th>
+            <th scope="col">Condition</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for game in game_list %}
+        <tr class="clickable" onclick="window.location='/view_game?game_id={{ game['id'] }}'">
+            <th scope="row">{{ game['id'] }}</th>
+            <td>{{ game['title'] }}</td>
+            <td>{{ game['series'] }}</td>
+            <td>{{ game['release_date'] }}</td>
+            <td>{{ game['platform'] }}</td>
+            <td>{{ game['developer'] }}</td>
+            <td>{{ game['publisher'] }}</td>
+            <td>{{ game['audience_rating'] }}</td>
+            <td>{{ game['region'] }}</td>
+            <td>{{ game['format'] }}</td>
+            <td>{{ game['purchase_price'] }}</td>
+            <td>{{ game['condition'] }}</td>
+        </tr>
+        {% endfor %}
+       
+    </tbody>
+</table>
+
 {% endblock %}

@@ -1,14 +1,16 @@
 from flask import Blueprint, render_template, request, flash
 from flask import jsonify
-from video_game_collector.forms import AddGameForm, AddVendorForm, AddPublisherForm, AddDeveloperForm
+from video_game_collector.forms import AddGameForm, AddVendorForm, AddPublisherForm, AddDeveloperForm, AddGenreForm
 from video_game_collector.forms import AddConditionForm, AddAudienceRatingForm, AddRegionForm, AddFormatForm
-from video_game_collector.forms import AddPlatformForm
+from video_game_collector.forms import AddPlatformForm, EditGameForm, DetailViewGameForm
 from video_game_collector.api.vendor_api import VendorApi
 from video_game_collector.api.catalog_api import CatalogApi
 from video_game_collector.models.publishers import Publishers
 from video_game_collector.models.developers import Developers
 from video_game_collector.models.platforms import Platforms
 from video_game_collector.models.age_ratings import AgeRatings
+from video_game_collector.models.genres import Genres
+from video_game_collector.models.games import Games
 from video_game_collector.api.igdb_api import igdbApi
 from datetime import datetime
 
@@ -17,7 +19,8 @@ publishers = Publishers()
 developers = Developers()
 platforms = Platforms()
 age_ratings = AgeRatings()
-
+genres = Genres()
+games = Games()
 
 def load_comboboxes(form):
     vendor_api = VendorApi()
@@ -54,6 +57,10 @@ def load_comboboxes(form):
     publishers = [(c['id'], c['name']) for c in publishers_json]
     publishers.insert(0, (-1, ''))
 
+    genres_json = catalog_api.get_genres()
+    genres = [(c['id'], c['name']) for c in genres_json]
+    genres.insert(0, (-1, ''))
+
     form.vendor_id.choices = vendors
     form.condition_id.choices = conditions
     form.region_id.choices = regions
@@ -62,14 +69,19 @@ def load_comboboxes(form):
     form.game_platform_id.choices = platforms
     form.developer_id.choices = developers
     form.publisher_id.choices = publishers
+    form.genre_id.choices = genres
 
 
 @views.route('/', methods=['GET', 'POST'])
-def games():
+def home():
     if request.method == 'POST':
         flash('Note added!', category='success')
 
-    return render_template("home.html")
+    games.load_games()
+    game_list = games.get_games()
+    print(game_list[0]['release_date'])
+
+    return render_template("home.html", game_list=game_list)
 
 
 @views.route('/add_game', methods=['GET', 'POST'])
@@ -81,6 +93,7 @@ def add_game():
     developers.load_developers()
     platforms.load_platforms()
     age_ratings.load_age_ratings()
+    genres.load_genres()
 
     if request.method == 'POST':
         flash('Game added!', category='success')
@@ -92,14 +105,21 @@ def add_game():
 @views.route('/lookup_game', methods=['GET'])
 def lookup_game():
     if request.method == 'GET':
-        print('Lookup game')
+        #print('Lookup game')
         if request.is_json:
             igdb_api = igdbApi()
             game_title = request.args.get('game_title')
             game = igdb_api.lookup_game(game_title)
 
+            if not game:
+                return jsonify({
+                'game_title': game_title,
+                'sort_title': game_title,                
+                'description': 'Game not found'                
+            })
+
             igdb_id = game.id
-            # print(igdb_id)
+            #print(igdb_id)
             game_title = _remove_commas(game.name)
             sort_title = _remove_commas(game.name)
             series = _remove_commas(game.collection.name)
@@ -113,7 +133,9 @@ def lookup_game():
             age_rating = igdb_api.lookup_age_rating(age_rating_id)
             # print(age_rating)
 
-            # print(rating_id)
+            #print(game.genres[0].name)
+
+            genre_id = -1
             developer_id = -1
             publisher_id = -1
             platform_id = -1
@@ -131,6 +153,7 @@ def lookup_game():
             publisher_id = publishers.get_publisher_id(publisher)
             developer_id = developers.get_developer_id(developer)
             platform_id = platforms.get_platform_id(platform)
+            genre_id = genres.get_genre_id(game.genres[0].name)
             age_rating_id = age_ratings.get_age_rating_id(age_rating)
 
             return jsonify({
@@ -143,7 +166,8 @@ def lookup_game():
                 'developer_id': developer_id,
                 'publisher_id': publisher_id,
                 'description': summary,
-                'igdb_id': igdb_id
+                'igdb_id': igdb_id,
+                'genre_id': genre_id
             })
 
 
@@ -290,6 +314,56 @@ def add_platform():
 
     return render_template("add_platform.html", form=form)
 
+@ views.route('/add_genre', methods=['GET', 'POST'])
+def add_genre():
+    form = AddGenreForm()
+
+    if request.method == 'POST':
+        catalog_api = CatalogApi()
+        genre_name = form.genre_name.data
+        # print(form.vendor_name.data)
+        r = catalog_api.post_genres(genre_name)
+        if (r.status_code == 200):
+            flash('genre added!', category='success')
+        else:
+            flash(f'Error {r.text}', category='error')
+        return render_template("add_genre.html", form=form)
+
+    return render_template("add_genre.html", form=form)    
+
+@views.route('/edit_game', methods=['GET', 'POST'])
+def edit_game():
+    form = EditGameForm()
+
+    #load_comboboxes(form)
+    publishers.load_publishers()
+    developers.load_developers()
+    platforms.load_platforms()
+    age_ratings.load_age_ratings()
+    genres.load_genres()
+
+    if request.method == 'POST':
+        flash('Game updated!', category='success')
+        return render_template("edit_game.html")
+
+    return render_template("edit_game.html", form=form)
+
+@views.route('/view_game', methods=['GET', 'POST'])
+def view_game():
+    form = DetailViewGameForm()
+
+    #load_comboboxes(form)
+    publishers.load_publishers()
+    developers.load_developers()
+    platforms.load_platforms()
+    age_ratings.load_age_ratings()
+    genres.load_genres()
+
+    if request.method == 'POST':
+        flash('Game updated!', category='success')
+        return render_template("view_game.html")
+
+    return render_template("view_game.html", form=form)
 
 def _remove_commas(text):
     return text.replace(',', '')

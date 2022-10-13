@@ -37,10 +37,27 @@ class CatalogApi():
             'http://localhost:5005/api/v1/video_game_collector/publishers')
         return r.json()
 
+    def get_genres(self):
+        r = requests.get(
+            'http://localhost:5005/api/v1/video_game_collector/cataloggenres')
+        return r.json()
+
+    def get_games(self):
+        r = requests.get(
+            'http://localhost:5005/api/v1/video_game_collector/games')
+        return r.json()        
+
     def post_publishers(self, publisher_name):
         data = {'name': publisher_name}
         r = requests.post(
             'http://localhost:5005/api/v1/video_game_collector/publishers', json=data
+        )
+        return r
+
+    def post_genres(self, genre_name):
+        data = {'name': genre_name}
+        r = requests.post(
+            'http://localhost:5005/api/v1/video_game_collector/cataloggenres', json=data
         )
         return r
 

@@ -18,7 +18,9 @@ $(document).ready(function () {
                 $('#audience_rating_id').val(response.rating_id);
                 $('#developer_id').val(response.developer_id);
                 $('#publisher_id').val(response.publisher_id);
+                $('#genre_id').val(response.genre_id);
                 $('#description').text(response.description);
+                $('#igdb_text').val(response.igdb_id);      
             }
         })
 

@@ -1,4 +1,3 @@
-from flask import jsonify
 from flask import current_app
 from igdb.wrapper import IGDBWrapper
 from igdb.igdbapi_pb2 import GameResult, AgeRatingResult
@@ -69,14 +68,11 @@ class igdbApi():
         response.ParseFromString(byte_array)
 
         if not len(response.games):
-            return jsonify({
-                'game_title': 'Game not found',
-                'sort_title': 'Game not found'
-            })
+            print('Game not found')
+            return None
 
         #print(f'Games returned {len(response.games)}')
         game = response.games[0]
-        # print(game)
         return game
 
     def lookup_age_rating(self, age_rating_id):
